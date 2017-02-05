@@ -1,6 +1,8 @@
 package ph.com.retorfit2.retrofit;
 
 
+import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -44,6 +46,7 @@ public class AppClient {
             mRetrofit = new Retrofit.Builder()
                     .baseUrl(ApiStores.API_SERVER_URL)
                     .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .client(okHttpClient)
                     .build();
         }

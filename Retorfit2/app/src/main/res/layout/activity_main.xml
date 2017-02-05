@@ -12,24 +12,32 @@
 
     <LinearLayout
         android:id="@+id/ll_input"
-        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
         <EditText
             android:id="@+id/et_source"
-            android:layout_weight="1"
             android:layout_width="0dp"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/btn_translate"
-            android:text="번역"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="번역" />
+
+        <Button
+            android:id="@+id/btn_translate_with_rx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="번역RX" />
     </LinearLayout>
 
     <TextView
-        android:layout_below="@+id/ll_input"
         android:id="@+id/tv_target"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/ll_input" />
 </RelativeLayout>
