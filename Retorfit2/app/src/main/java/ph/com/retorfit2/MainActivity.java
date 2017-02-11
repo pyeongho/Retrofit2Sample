@@ -2,7 +2,6 @@ package ph.com.retorfit2;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,29 +17,35 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
 import ph.com.retorfit2.model.TranslateMessage;
+import ph.com.retorfit2.mvp.main.MainPresenter;
+import ph.com.retorfit2.mvp.main.MainView;
+import ph.com.retorfit2.mvp.other.MvpActivity;
 import ph.com.retorfit2.retrofit.ApiCallback;
 import ph.com.retorfit2.retrofit.ApiStores;
 import ph.com.retorfit2.retrofit.AppClient;
 import ph.com.retorfit2.retrofit.RetrofitCallback;
 import retrofit2.Call;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MvpActivity<MainPresenter> implements MainView {
 
     @BindView(R.id.et_source)
     EditText etSource;
-    @BindView(R.id.btn_translate)
-    Button btnTranslate;
     @BindView(R.id.tv_target)
     TextView tvTarget;
-    @BindView(R.id.btn_translate_with_rx)
-    Button btnTranslateWithRx;
+    @BindView(R.id.btn_translate_with_rx_mvp)
+    Button btnTranslateWithRxMvp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
 
+
+    }
+
+    @Override
+    protected MainPresenter createPresenter() {
+        return new MainPresenter(this);
     }
 
     private void loadDataByRetrofit(String Text) {
@@ -57,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(int code, String msg) {
                 Log.d("Test", "" + msg);
-                dataFail(code,msg);
+                dataFail(code, msg);
             }
 
             @Override
@@ -74,90 +79,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void dataFail(int code, String msg){
-        Toast.makeText(getApplicationContext(),"code:"+code+"  "+msg, Toast.LENGTH_SHORT).show();
+    private void dataFail(int code, String msg) {
+        Toast.makeText(getApplicationContext(), "code:" + code + "  " + msg, Toast.LENGTH_SHORT).show();
     }
-    private void dataSuccess(TranslateMessage tm){
+
+    private void dataSuccess(TranslateMessage tm) {
         tvTarget.setText(tm.getMessage().getResult().getTranslatedText());
     }
 
-    private ProgressDialog progressDialog;
-
-    public ProgressDialog showProgressDialog(CharSequence message) {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(message);
-        progressDialog.show();
-        return progressDialog;
-    }
-
-    public void dismissProgressDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.dismiss();
-        }
-    }
-
-    @OnClick({R.id.btn_translate, R.id.btn_translate_with_rx})
+    @OnClick({R.id.btn_translate_with_rx_mvp})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_translate:
+            case R.id.btn_translate_with_rx_mvp:
                 if (etSource.getText() != null) {
-                    showProgressDialog("번역중");
-                    loadDataByRetrofit(etSource.getText().toString());
-                }
-                break;
-            case R.id.btn_translate_with_rx:
-                if (etSource.getText() != null) {
-                    showProgressDialog("번역중");
-                    loadDataWithRx(etSource.getText().toString());
-
+                    mvpPresenter.loadDataByRetrofitRxjava(etSource.getText().toString());
                 }
                 break;
         }
 
-    }
-
-    private void loadDataWithRx(String text){
-        ApiStores apiStores = AppClient.retrofit().create(ApiStores.class);
-        addSubscription(apiStores.loadDataByRetrofitRx("en", "ko", text),
-                new ApiCallback<TranslateMessage>() {
-                    @Override
-                    public void onSuccess(TranslateMessage model) {
-                        dataSuccess(model);
-                    }
-
-                    @Override
-                    public void onFailure(Integer code, String msg) {
-                        dataFail(code,msg);
-                    }
-
-                    @Override
-                    public void onFinish() {
-                        dismissProgressDialog();
-                    }
-                });
-    }
-    private CompositeDisposable mCompositeSubscription;
-
-    public void addSubscription(Observable<TranslateMessage> observable, ApiCallback<TranslateMessage> callback) {
-        if (mCompositeSubscription == null) {
-            mCompositeSubscription = new CompositeDisposable();
-        }
-        mCompositeSubscription.add(observable
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(callback));
-    }
-
-    public void onUnsubscribe() {
-        Log.d("test", "onUnsubscribe");
-        if (mCompositeSubscription != null)
-            mCompositeSubscription.clear();
     }
 
     @Override
     protected void onDestroy() {
-       onUnsubscribe();
         super.onDestroy();
+    }
+
+    @Override
+    public void getDataSuccess(TranslateMessage model) {
+        dataSuccess(model);
 
     }
+
+    @Override
+    public void getDataFail(Integer code, String msg) {
+        dataFail(code,msg);
+    }
+
 }

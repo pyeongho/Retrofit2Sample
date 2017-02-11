@@ -23,16 +23,10 @@
             android:layout_weight="1" />
 
         <Button
-            android:id="@+id/btn_translate"
+            android:id="@+id/btn_translate_with_rx_mvp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="번역" />
-
-        <Button
-            android:id="@+id/btn_translate_with_rx"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="번역RX" />
+            android:text="번역RXMVP" />
     </LinearLayout>
 
     <TextView
