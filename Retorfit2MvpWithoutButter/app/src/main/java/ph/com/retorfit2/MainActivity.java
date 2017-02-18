@@ -5,12 +5,14 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
 import ph.com.retorfit2.databinding.ActivityMainBinding;
+import ph.com.retorfit2.model.TResponse;
 import ph.com.retorfit2.model.TranslateMessage;
+import ph.com.retorfit2.mvp.core.MvpActivity;
 import ph.com.retorfit2.mvp.main.MainEventHandler;
 import ph.com.retorfit2.mvp.main.MainPresenter;
 import ph.com.retorfit2.mvp.main.MainView;
-import ph.com.retorfit2.mvp.core.MvpActivity;
 
 
 public class MainActivity extends MvpActivity<MainPresenter> implements MainView,MainEventHandler {
@@ -34,8 +36,8 @@ public class MainActivity extends MvpActivity<MainPresenter> implements MainView
         Toast.makeText(getApplicationContext(), "code:" + code + "  " + msg, Toast.LENGTH_SHORT).show();
     }
 
-    private void dataSuccess(TranslateMessage tm) {
-        mBinding.tvTarget.setText(tm.getMessage().getResult().getTranslatedText());
+    private void dataSuccess(TResponse<TranslateMessage> tr) {
+        mBinding.tvTarget.setText(tr.data.getMessage().getResult().getTranslatedText());
     }
 
     @Override
@@ -44,7 +46,7 @@ public class MainActivity extends MvpActivity<MainPresenter> implements MainView
     }
 
     @Override
-    public void getDataSuccess(TranslateMessage model) {
+    public void getDataSuccess(TResponse model) {
         dataSuccess(model);
     }
 

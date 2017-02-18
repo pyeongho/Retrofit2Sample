@@ -1,13 +1,11 @@
 package ph.com.retorfit2.mvp.main;
 
 
-import android.view.View;
-
-import ph.com.retorfit2.model.TranslateMessage;
+import ph.com.retorfit2.model.TResponse;
 
 public interface MainView extends BaseView{
 
-    void getDataSuccess(TranslateMessage model);
+    void getDataSuccess(TResponse model);
 
     void getDataFail(Integer code, String msg);
 

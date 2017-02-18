@@ -2,12 +2,11 @@ package ph.com.retorfit2.retrofit;
 
 
 import io.reactivex.Observable;
+import ph.com.retorfit2.model.TResponse;
 import ph.com.retorfit2.model.TranslateMessage;
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
 
@@ -23,7 +22,7 @@ public interface ApiStores {
 
     @FormUrlEncoded
     @POST("/v1/language/translate")
-    Observable<TranslateMessage> loadDataByRetrofitRx(
+    Observable<TResponse> loadDataByRetrofitRx(
             @Field("source") String source,
             @Field("target") String target,
             @Field("text") String text);
