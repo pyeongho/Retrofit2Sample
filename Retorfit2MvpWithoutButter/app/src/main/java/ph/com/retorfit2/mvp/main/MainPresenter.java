@@ -2,7 +2,7 @@ package ph.com.retorfit2.mvp.main;
 
 import android.util.Log;
 
-import ph.com.retorfit2.model.TResponse;
+import ph.com.retorfit2.model.TranslateMessage;
 import ph.com.retorfit2.mvp.core.BasePresenter;
 import ph.com.retorfit2.retrofit.ApiCallback;
 
@@ -14,11 +14,13 @@ public class MainPresenter extends BasePresenter<MainView> {
     }
 
     public void loadDataByRetrofitRxjava(String text) {
+
+
         mvpView.showLoading("로딩중");
         addSubscription(apiStores.loadDataByRetrofitRx("en", "ko", text),
-                new ApiCallback<TResponse>() {
+                new ApiCallback<TranslateMessage>() {
                     @Override
-                    public void onSuccess(TResponse model) {
+                    public void onSuccess(TranslateMessage model) {
                         mvpView.getDataSuccess(model);
                     }
 

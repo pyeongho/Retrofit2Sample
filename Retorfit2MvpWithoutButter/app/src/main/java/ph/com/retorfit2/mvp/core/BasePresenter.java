@@ -5,7 +5,7 @@ import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.schedulers.Schedulers;
-import ph.com.retorfit2.model.TResponse;
+import ph.com.retorfit2.model.TranslateMessage;
 import ph.com.retorfit2.retrofit.ApiCallback;
 import ph.com.retorfit2.retrofit.ApiStores;
 import ph.com.retorfit2.retrofit.AppClient;
@@ -35,7 +35,7 @@ public class BasePresenter<V> {
     }
 
 
-    public void addSubscription(Observable<TResponse> observable , ApiCallback<TResponse> callback) {
+    public void addSubscription(Observable<TranslateMessage> observable , ApiCallback<TranslateMessage> callback) {
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeDisposable();
         }
