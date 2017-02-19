@@ -35,7 +35,7 @@ public class BasePresenter<V> {
     }
 
 
-    public void addSubscription(Observable<TranslateMessage> observable , ApiCallback<TranslateMessage> callback) {
+    public void addSubscription(Observable<Object> observable , ApiCallback<Object> callback) {
         if (mCompositeSubscription == null) {
             mCompositeSubscription = new CompositeDisposable();
         }

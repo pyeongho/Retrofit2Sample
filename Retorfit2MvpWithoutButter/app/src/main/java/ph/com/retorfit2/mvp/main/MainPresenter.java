@@ -18,10 +18,17 @@ public class MainPresenter extends BasePresenter<MainView> {
 
         mvpView.showLoading("로딩중");
         addSubscription(apiStores.loadDataByRetrofitRx("en", "ko", text),
-                new ApiCallback<TranslateMessage>() {
+                new ApiCallback<Object>() {
                     @Override
-                    public void onSuccess(TranslateMessage model) {
-                        mvpView.getDataSuccess(model);
+                    public void onSuccess(Object model) {
+                        try {
+                            Log.d("test",
+                                    ((TranslateMessage)model).getMessage().getResult().getTranslatedText());
+                        }catch (Exception e){
+                            Log.e("error",e.getMessage());
+                        }
+
+                        //mvpView.getDataSuccess(model);
                     }
 
                     @Override

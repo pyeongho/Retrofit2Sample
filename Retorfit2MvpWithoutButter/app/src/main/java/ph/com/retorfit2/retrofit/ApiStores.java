@@ -21,7 +21,7 @@ public interface ApiStores {
 
     @FormUrlEncoded
     @POST("/v1/language/translate")
-    Observable<TranslateMessage> loadDataByRetrofitRx(
+    Observable<Object> loadDataByRetrofitRx(
             @Field("source") String source,
             @Field("target") String target,
             @Field("text") String text);
