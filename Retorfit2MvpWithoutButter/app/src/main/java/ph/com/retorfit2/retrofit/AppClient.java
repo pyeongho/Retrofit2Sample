@@ -27,8 +27,8 @@ public class AppClient {
                 loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
                 builder.addInterceptor(loggingInterceptor);
             }
-            final String clientId = "jp5QKiuRQArPxBPo3seZ";//애플리케이션 클라이언트 아이디값";
-            final String clientSecret = "fHCyjNIwAi";//애플리케이션 클라이언트 시크릿값";
+            final String clientId = "애플리케이션 클라이언트 아이디값";//애플리케이션 클라이언트 아이디값";
+            final String clientSecret = "애플리케이션 클라이언트 시크릿값";//애플리케이션 클라이언트 시크릿값";
             builder.addInterceptor(new Interceptor() {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
