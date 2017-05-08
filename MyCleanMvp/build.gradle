@@ -44,7 +44,6 @@ ext {
     rxAndroidVersion = '2.0.1'
     rxJavaVersion = '2.0.1'
     glideVersion = '3.7.0'
-    daum_api_key = "5e337ed9df3cfc0e7bca1a5d05645d85"
 }
 
 
