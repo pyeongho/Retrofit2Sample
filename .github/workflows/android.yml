@@ -23,7 +23,7 @@ jobs:
         with:
           ruby-version: 2.6
       - name: gem install bundler
-        run: "sudo gem install bundler -v '2.1.4'"
+        run: "sudo gem install bundler"
       - name: bundle update --bundler
         run: "bundle update --bundler"
       - name: bundle install
