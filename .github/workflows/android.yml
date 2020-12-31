@@ -25,11 +25,11 @@ jobs:
       - name: gem install bundler
         run: "sudo gem install bundler"
       - name: bundle install
-        run: "sudo bundle install"
+        run: "bundle install"
       - name: install plugins
-        run: "sudo bundle exec fastlane install_plugins"
+        run: "bundle exec fastlane install_plugins"
       - name: Build Remember APK
-        run: "sudo bundle exec fastlane build_apk_by_tag"
+        run: "bundle exec fastlane build_apk_by_tag"
 
 #      - name: Set tag name env
 #        run: echo DEVELOP_VERSION=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
