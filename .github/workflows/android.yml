@@ -27,7 +27,7 @@ jobs:
 #           ruby-version: 2.6
 #           bundler-cache: true # runs 'bundle install' and caches installed gems automatically:
       - name: echo
-        run: "echo $TEST_1"
+        run: echo $TEST_1
 #       - name: bundle install
 #         run: "bundle install"
 #       - name: install plugins
