@@ -27,8 +27,6 @@ jobs:
 #         with:
 #           ruby-version: 2.6
 #           bundler-cache: true # runs 'bundle install' and caches installed gems automatically:
-      - name: echo
-        run: echo $TEST_1
       - name: create store file
         run: echo $TEST_2 | base64 -d > profeelme.keystore
 #       - name: bundle install
