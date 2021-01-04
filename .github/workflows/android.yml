@@ -13,6 +13,7 @@ jobs:
     runs-on: ubuntu-18.04
     env:
       TEST_1: ${{ secrets.TEST_1 }}
+      TEST_2: ${{ secrets.TEST_2 }}
 
 
     steps:
@@ -28,6 +29,8 @@ jobs:
 #           bundler-cache: true # runs 'bundle install' and caches installed gems automatically:
       - name: echo
         run: echo $TEST_1
+      - name: create store file
+        run: echo $TEST_2 | base64 -d > profeelme.keystore
 #       - name: bundle install
 #         run: "bundle install"
 #       - name: install plugins
