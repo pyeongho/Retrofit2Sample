@@ -22,8 +22,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.8
-      - name: Install NDK
-        run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
+      - name: echo
+        run: echo $ANDORID_HMOE
+#       - name: Install NDK
+#         run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
 #       - name: set up ndk
 #         uses: nttld/setup-ndk@v1
 #         with:
@@ -34,8 +36,8 @@ jobs:
 #         with:
 #           ruby-version: 2.6
 #           bundler-cache: true # runs 'bundle install' and caches installed gems automatically:
-      - name: create store file
-        run: "echo  $TEST_2 | base64 -di > profeelme.keystore"
+#       - name: create store file
+#         run: "echo  $TEST_2 | base64 -di > profeelme.keystore"
 #       - name: bundle install
 #         run: "bundle install"
 #       - name: install plugins
