@@ -23,7 +23,9 @@ jobs:
         with:
           java-version: 1.8
       - name: echo
-        run: echo $ANDORID_HMOE
+        run: echo ${ANDORID_HOME} 
+      - name: echo2
+        run: echo $ANDORID_HOME
 #       - name: Install NDK
 #         run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
 #       - name: set up ndk
