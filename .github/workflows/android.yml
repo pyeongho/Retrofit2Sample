@@ -21,7 +21,7 @@ jobs:
       - name:  tag
         env:
           TEST_3: ${GITHUB_REF#refs/*/}
-          run: "echo $TEST_3"
+        run: "echo $TEST_3"
       - name:  tag2
         run: echo ${GITHUB_REF#refs/*/}
       - name: Extract branch name
