@@ -3,105 +3,26 @@ name: remember develop CI
 on:
   push:
     tags:
-      - BUILD_TEST*
+      - ADEV*
+      - ARC*
 
 jobs:
   build:
 
     runs-on: ubuntu-18.04
-    env:
-      TEST_1: ${{ secrets.TEST_1 }}
-      TEST_2: ${{ secrets.TEST_2 }}
-
-
     steps:
       - uses: actions/checkout@v2
-      - name:  tag
-        env:
-          TEST_3: ${GITHUB_REF#refs/*/}
-        run: echo $TEST_3
-      - name:  tag2
-        run: "echo tag:${GITHUB_REF#refs/*/}"
-      - name: Extract branch name
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: extract_branch
-      - name: Dump GitHub context
-        env:
-          GITHUB_CONTEXT: ${{ toJson(github) }}
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump GitHub context2
-        run: echo "$GITHUB_CONTEXT"
-      - name: Dump job context
-        env:
-          JOB_CONTEXT: ${{ toJson(job) }}
-        run: echo "$JOB_CONTEXT"
-      - name: Dump steps context
-        env:
-          STEPS_CONTEXT: ${{ toJson(steps) }}
-        run: echo "$STEPS_CONTEXT"
-      - name: Dump runner context
-        env:
-          RUNNER_CONTEXT: ${{ toJson(runner) }}
-        run: echo "$RUNNER_CONTEXT"
-      - name: Dump strategy context
-        env:
-          STRATEGY_CONTEXT: ${{ toJson(strategy) }}
-        run: echo "$STRATEGY_CONTEXT"
-      - name: Dump matrix context
-        env:
-          MATRIX_CONTEXT: ${{ toJson(matrix) }}
-        run: echo "$MATRIX_CONTEXT"        
-#       - uses: actions/checkout@v2
-#       - name: set up JDK 1.8
-#         uses: actions/setup-java@v1
-#         with:
-#           java-version: 1.8
-#       - name: echo
-#         run: echo ${ANDORID_HOME} 
-#       - name: echo2
-#         run: echo $ANDORID_HOME
-#       - name: Install NDK
-#         run: echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.3.6528147" --sdk_root=${ANDROID_SDK_ROOT}
-#       - name: set up ndk
-#         uses: nttld/setup-ndk@v1
-#         with:
-#           ndk-version: r21d
-#           runs: ndk-build NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=./Android.mk NDK_APPLICATION_MK=./Application.mk
-#       - name: Set up Ruby 2.6
-#         uses: actions/setup-ruby@v1
-#         with:
-#           ruby-version: 2.6
-#           bundler-cache: true # runs 'bundle install' and caches installed gems automatically:
-#       - name: create store file
-#         run: "echo  $TEST_2 | base64 -di > profeelme.keystore"
-#       - name: bundle install
-#         run: "bundle install"
-#       - name: install plugins
-#         run: "bundle exec fastlane install_plugins"
-#       - name: Build Remember APK
-#         run: "bundle exec fastlane build_apk_by_tag"
-
-#      - name: Set tag name env
-#        run: echo DEVELOP_VERSION=${GITHUB_REF#refs/*/} >> $GITHUB_ENV
-#      - name: check tag name
-#        run: |
-#          echo $DEVELOP_VERSION
-#          echo ${{ env.DEVELOP_VERSION }}
-#      - name: change file name
-#        run: mv app/build/outputs/apk/dev/debug/app-dev-debug.apk app/build/outputs/apk/dev/debug/${{ env.DEVELOP_VERSION }}.apk
-#      - name: Upload APK
-#        uses: actions/upload-artifact@v2
-#        with:
-#          name: ${{ env.DEVELOP_VERSION }}
-#          path: app/build/outputs/apk/dev/debug/${{ env.DEVELOP_VERSION }}.apk
-#      - name: Slack Notification
-#        uses: rtCamp/action-slack-notify@master
-#        env:
-#          SLACK_CHANNEL: notify_android-build
-#          SLACK_COLOR: '#00AA00'
-#          SLACK_ICON: https://scontent-gmp1-1.xx.fbcdn.net/v/t1.0-1/p320x320/91169376_156983249102340_1282099367657865216_n.png?_nc_cat=107&_nc_sid=1eb0c7&_nc_ohc=HUqFwEXCh1AAX9albM-&_nc_ht=scontent-gmp1-1.xx&oh=7995cc28944e6dedf4f6cf36c1649a46&oe=5F8FEB24
-#          SLACK_MESSAGE: '${{ env.DEVELOP_VERSION }} 개발 빌드가 완료되었습니다'
-#          SLACK_TITLE: '${{ env.DEVELOP_VERSION }}  개발버전 입니다.'
-#          SLACK_USERNAME: 개발 개발
-#          SLACK_WEBHOOK: ${{ secrets.ANDROID_BUILD }}
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+      - name: gem install bundler
+        run: "sudo gem install bundler:2.1.4"
+      - name: bundle install
+        run: "bundle install"
+      - name: install plugins
+        run: "bundle exec fastlane install_plugins"
+      - name: append tag
+        run: "echo TAG=${GITHUB_REF#refs/*/}  > ./fastlane/.env"
+      - name: Build Remember APK
+        run: "bundle exec fastlane build_apk_by_tag"
