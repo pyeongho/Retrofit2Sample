@@ -2,10 +2,8 @@ name: remember develop CI
 
 on:
   push:
-    branches: [ feature/action ]
-#  push:
-#    tags:
-#      - BUILD_TEST*
+    tags:
+      - BUILD_TEST*
 
 jobs:
   build:
