@@ -21,7 +21,7 @@ jobs:
           TEST_3: ${GITHUB_REF#refs/*/}
         run: echo $TEST_3
       - name:  tag2
-        run: echo tag:${GITHUB_REF#refs/*/}
+        run: "echo tag:${GITHUB_REF#refs/*/}"
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
