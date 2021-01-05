@@ -19,7 +19,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name:  tag
-        run: "bundle exec fastlane build_apk_by_tag tag:${GITHUB_REF#refs/*/}"
+        run: "echo exec fastlane build_apk_by_tag tag:${GITHUB_REF#refs/*/}"
+      - name:  tag2
+        run: echo ${GITHUB_REF#refs/*/}
       - name: Extract branch name
         shell: bash
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
