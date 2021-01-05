@@ -1,0 +1,388 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+def get_flavor(mode)
+    flavor = "JbQa"
+
+    case mode
+    when "prod"
+        flavor = "JbProd"
+    when "alpha"
+        flavor = "JbQa"
+    when "bravo"
+        flavor = "JbDev"
+    when "stage"
+        flavor = "JbStage"
+    when "fin"
+        flavor = "JbFin"
+    end
+
+    return flavor
+end
+
+default_platform(:android)
+
+platform :android do
+    before_all do |lane, options|
+        set_version_env
+    end
+
+    private_lane :buildQa do
+        gradle(task: "clean")
+        gradle(
+            task: "assemble",
+            flavor: "JbQa",
+            build_type: "Release"
+        )
+    end
+
+    private_lane :buildProd do
+        gradle(task: "clean assembleJbProdRelease")
+    end
+
+    private_lane :buildMockDebugBundle do
+        gradle(task: "clean")
+        gradle(
+            task: "bundle",
+            flavor: "Mock",
+            build_type: "Debug"
+        )
+    end
+
+    private_lane :set_version_env do
+        file = File.open("../app/gradle.properties", "r")
+        file_data = file.readlines.map(&:chomp)
+        file.close()
+
+        version_code = file_data[0].split("APP_VERSION=")[1]
+        version_name = file_data[1].split("APP_VERSION_NAME=")[1]
+
+        ENV["APP_VERSION"] = version_code
+        ENV["APP_VERSION_NAME"] = version_name
+    end
+
+    private_lane :send_html_file_to_slack do |options|
+        output_path = options[:output_path]
+        branch = Actions.git_branch
+        author = Actions.git_author_email
+        commit = Actions.last_git_commit_hash(true)
+        message = Actions.last_git_commit_message
+
+        version_code = ENV['APP_VERSION']
+        version_name = ENV['APP_VERSION_NAME']
+
+        tag = branch.split("/").last
+
+        if tag.start_with? "DEV"
+            tag_splits = tag.split("_")
+            endpoint = tag_splits[1]
+            issue = tag_splits[2]
+            build_num = tag_splits[3]
+
+            slack(
+                default_payloads: [],
+                attachment_properties: {
+                    "title": "[#{endpoint}] #{issue} 검수용 빌드를 확인해주세요",
+                    "title_link": "#{output_path}",
+                    "color": "FFF199",
+                    "fields": [
+                        {
+                            title: "Jira Issue",
+                            value: "<http://jira.dramancompany.com/browse/#{issue}|#{issue}>",
+                            short: true
+                        },
+                        {
+                            title: "Build Number",
+                            value: build_num,
+                            short: true
+                        },
+                        {
+                            title: "Git Author",
+                            value: author,
+                            short: true
+                        },
+                        {
+                            title: "Last Commit",
+                            value: message
+                        },
+                        {
+                            title: "Git Commit Hash",
+                            value: commit
+                        }
+                    ],
+                    "footer": "Remember Android",
+                    "footer_icon": "https://avatars.slack-edge.com/2020-04-22/1076757641653_8de59f8d26eb725ee894_72.png"
+                },
+                slack_url: ENV['SLACK_URL']
+            )
+        elsif tag.start_with? "RC"
+            slack(
+                default_payloads: [],
+                attachment_properties: {
+                    "title": "[QA 빌드] v#{version_name}(#{version_code}) 검수용 빌드를 확인해주세요",
+                    "title_link": "#{output_path}",
+                    "color": "1B8EE4",
+                    "fields": [
+                        {
+                            title: "Fix version",
+                            value: "v#{version_name}(#{version_code})",
+                            short: true
+                        },
+                        {
+                            title: "Git Author",
+                            value: author,
+                            short: true
+                        },
+                        {
+                            title: "Last Commit",
+                            value: message
+                        },
+                        {
+                            title: "Git Commit Hash",
+                            value: commit
+                        }
+                    ],
+                    "footer": "Remember Android",
+                    "footer_icon": "https://avatars.slack-edge.com/2020-04-22/1076757641653_8de59f8d26eb725ee894_72.png"
+                },
+                slack_url: ENV['SLACK_URL']
+            )
+        elsif tag.start_with? "remember"
+            slack(
+                default_payloads: [],
+                attachment_properties: {
+                    "title": "[배포 빌드] v#{version_name}(#{version_code}) 배포용 APK가 생성되었습니다",
+                    "title_link": "#{output_path}",
+                    "color": "70D98D",
+                    "fields": [
+                        {
+                            title: "Release version",
+                            value: "v#{version_name}(#{version_code})",
+                            short: true
+                        },
+                        {
+                            title: "Git Author",
+                            value: author,
+                            short: true
+                        },
+                        {
+                            title: "Last Commit",
+                            value: message
+                        },
+                        {
+                            title: "Git Commit Hash",
+                            value: commit
+                        }
+                    ],
+                    "footer": "Remember Android",
+                    "footer_icon": "https://avatars.slack-edge.com/2020-04-22/1076757641653_8de59f8d26eb725ee894_72.png"
+                },
+                slack_url: ENV['SLACK_URL']
+            )
+        end
+    end
+
+    private_lane :send_google_play_slack do
+        author = Actions.git_author_email
+        commit = Actions.last_git_commit_hash(true)
+        message = Actions.last_git_commit_message
+
+        version_code = ENV['APP_VERSION']
+        version_name = ENV['APP_VERSION_NAME']
+
+        slack(
+            default_payloads: [],
+            attachment_properties: {
+                "title": "[배포 알림] v#{version_name}(#{version_code})가 Internal Test Track에 배포되었습니다",
+                "title_link": ENV['GOOGLE_PLAY_INTERNAL_TEST_TRACK_URL'],
+                "color": "EA5128",
+                "fields": [
+                    {
+                        title: "Release version",
+                        value: "v#{version_name}(#{version_code})",
+                        short: true
+                    },
+                    {
+                        title: "Git Author",
+                        value: author,
+                        short: true
+                    },
+                    {
+                        title: "Last Commit",
+                        value: message
+                    },
+                    {
+                        title: "Git Commit Hash",
+                        value: commit
+                    }
+                ],
+                "footer": "Remember Android",
+                "footer_icon": "https://avatars.slack-edge.com/2020-04-22/1076757641653_8de59f8d26eb725ee894_72.png"
+            },
+            slack_url: ENV['SLACK_URL']
+        )
+    end
+
+    private_lane :s3_apk do |options|
+        path = options[:upload_path]
+        apk_path = options[:apk_path]
+
+        aws_s3(
+            access_key: ENV['AWS_ACCESS_KEY_ID'],
+            secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+            bucket: ENV['AWS_BUCKET'],
+            region: ENV['AWS_REGION'],
+            acl: 'public-read',
+            app_directory: 'android',
+            path: path,
+            apk: apk_path
+        )
+    end
+
+    private_lane :s3_folder do |options|
+        path = options[:upload_path]
+        folder_path = options[:folder_path]
+
+        aws_s3(
+            access_key: ENV['AWS_ACCESS_KEY_ID'],
+            secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'],
+            bucket: ENV['AWS_BUCKET'],
+            region: ENV['AWS_REGION'],
+            acl: 'public-read',
+            app_directory: 'android',
+            path: path,
+            folder: folder_path
+        )
+    end
+
+    private_lane :upload_apk do
+        version_code = ENV['APP_VERSION']
+        version_name = ENV['APP_VERSION_NAME']
+
+        flavor = lane_context[SharedValues::GRADLE_FLAVOR].gsub!("Jb", "")
+        app_name = "Remember #{flavor}"
+        build_time = Time.new.strftime("%Y.%m.%d_%H:%M:%S")
+
+        upload_path = "apk/#{flavor}/v#{version_code}(#{version_name})_#{build_time}"
+        output_paths = lane_context[SharedValues::GRADLE_ALL_APK_OUTPUT_PATHS]
+        s3_output_paths = []
+
+        template = File.open("template.html", "r")
+        html_content = template.read
+        template.close()
+
+        html_content.gsub!("$APP_NAME", app_name)
+        html_content.gsub!("$VERSION_NAME", version_name)
+        html_content.gsub!("$VERSION_CODE", version_code)
+        html_content.gsub!("$BUILD_TIME", build_time)
+        html_content.gsub!("$BUILD_FLAVOR", flavor)
+
+        html_body_block = ""
+        output_paths.each { |output_path|
+            s3_apk(
+                upload_path: "#{upload_path}/",
+                apk_path: output_path
+            )
+
+            s3_output_path = Actions.lane_context[SharedValues::S3_APK_OUTPUT_PATH]
+
+            if output_path.include? "arm64-v8a"
+                abi = "<b>arm64-v8a</b>"
+            elsif output_path.include? "armeabi-v7a"
+                abi = "armeabi-v7a"
+            elsif output_path.include? "x86_64"
+                abi = "x86_64"
+            elsif output_path.include? "x86"
+                abi = "x86"
+            end
+            html_body_block << "<span class=\"download\" id=\"android\"><a href=\"#{s3_output_path}\" id=\"text\" class=\"btn btn-lg btn-default\" onclick=\"document.getElementById('finished').id = '';\">Install #{abi}</a></br></span></br>"
+        }
+        html_content.gsub!("$DOWNLOAD_BLOCK", html_body_block)
+
+        folder_name = 'html'
+        file_name = "index.html"
+
+        system 'mkdir', '-p', folder_name
+        File.open("#{folder_name}/#{file_name}", "w") { |html|
+            html.puts html_content
+            html.close()
+        }
+
+        s3_folder(
+            upload_path: upload_path,
+            folder_path: "fastlane/#{folder_name}"
+        )
+
+        s3_folder_path = Action.lane_context[SharedValues::S3_FOLDER_OUTPUT_PATH]
+        ENV["S3_ARTIFACT_URL"] = "#{s3_folder_path}/#{file_name}"
+    end
+
+    private_lane :build_apk_and_notify_slack do |options|
+        build_apk(options)
+        upload_apk
+        send_html_file_to_slack(output_path: ENV["S3_ARTIFACT_URL"])
+    end
+
+    private_lane :build_release_bundle_and_notify_slack do |options|
+        build_bundle(options)
+        supply(
+            track: "internal",
+            aab: lane_context[SharedValues::GRADLE_AAB_OUTPUT_PATH],
+            skip_upload_apk: true,
+            skip_upload_metadata: true,
+            skip_upload_images: true
+        )
+
+        send_google_play_slack
+    end
+
+    lane :build_apk do |options|
+        gradle(task: "clean")
+
+        flavor = get_flavor(options[:mode])
+        gradle(
+            task: "assemble",
+            flavor: flavor,
+            build_type: "Release"
+        )
+    end
+
+    lane :build_bundle do |options|
+        gradle(task: "clean")
+
+        flavor = get_flavor(options[:mode])
+        gradle(
+            task: "bundle",
+            flavor: flavor,
+            build_type: "Release"
+        )
+    end
+
+    lane :build_apk_by_tag do
+        tag = Actions.git_branch.split("/").last
+
+        if tag.start_with? "RC_"
+            build_apk_and_notify_slack(mode: "alpha")
+        elsif tag.start_with? "DEV_"
+            build_apk_and_notify_slack(mode: tag.split("_")[1])
+        end
+    end
+
+    lane :build_apk_and_bundle do |options|
+        mode = options[:mode]
+        build_release_bundle_and_notify_slack(mode: mode)
+        build_apk_and_notify_slack(mode: mode)
+    end
+end

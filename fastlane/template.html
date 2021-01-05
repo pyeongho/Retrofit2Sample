@@ -1,0 +1,88 @@
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>$APP_NAME</title>
+  </head>
+  <body>
+    <style type="text/css">
+      * {
+        font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+        text-align: center;
+        background-color: #f5f5f5;
+      }
+      h1 {
+        margin-bottom: 0px;
+      }
+      h2 {
+        margin-top: 5px;
+      }
+      .oneRow {
+        width: 100%;
+        overflow: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        text-align: center;
+      }
+      .download {
+        margin: 30px;
+        font-size: 130%;
+      }
+      .Prod {
+        display: none;
+      }
+      #appIcon {
+        -webkit-border-radius: 22.544%;
+        -moz-border-radius: 22.544%;
+        -ms-border-radius: 22.544%;
+          border-radius: 22.544%;
+
+        margin-bottom: 30px;
+      }
+      a {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      #os-message {
+        text-align: center;
+        color: #737373;
+        font-size: 14px;
+      }
+      #footnote {
+        color: #737373;
+        font-size: 14px;
+      }
+      #finished { display: none; }
+      #appLogo {
+        text-align: center;
+        max-width: 80px;
+        margin-top: 10px;
+      }
+    </style>
+
+    <h1 style="text-align: center;">$APP_NAME</h1>
+    <h2>$VERSION_NAME ($VERSION_CODE)</h2>
+    <p><em>빌드 시간 : $BUILD_TIME</em></p>
+    <p>아래 링크를 안드로이드 디바이스에서 클릭해 APK를 다운로드 받은 후,<br> APK를 열어서 설치해주세요.</p>
+
+    <div class="oneRow">
+      $DOWNLOAD_BLOCK
+      <span class="info">
+        <p></p>
+      </span>
+    </div>
+
+    <p id="finished">
+      APK를 다운로드 받고 있습니다. 다운로드가 완료되면 APK 파일을 열어서 설치해주세요.
+    </p>
+
+    <p id="footnote" class="$BUILD_FLAVOR">
+      이 빌드는 베타 버전이며, 외부 공개용이 아닙니다.
+    </p>
+    <img src="https://firebasestorage.googleapis.com/v0/b/remember-service.appspot.com/o/remember_appIcon.png?alt=media&token=dc94292b-090d-49c9-bb9c-0b691a6f6c62" id="appLogo" />
+  </body>
+</html>

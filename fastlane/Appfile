@@ -1,0 +1,2 @@
+json_key_file("./json_key.json")
+package_name("kr.co.rememberapp") # e.g. com.krausefx.app
